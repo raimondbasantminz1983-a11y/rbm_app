@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RBM CYBER ROBOTIC APP</title>
+
+<style>
+body{
+    background:#000;
+    color:#00ff00;
+    font-family:monospace;
+    margin:20px;
+    text-align:center;
+}
+
+.box{
+    border:2px solid #00ff00;
+    background:#111;
+    padding:15px;
+    margin:15px auto;
+    max-width:500px;
+    text-align:left;
+    border-radius:10px;
+}
+
+.btn-panel{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+}
+
+button{
+    background:#222;
+    color:#00ff00;
+    border:1px solid #00ff00;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#00ff00;
+    color:#000;
+}
+
+pre{
+    background:#000;
+    color:#00ff00;
+    padding:10px;
+    overflow-x:auto;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/brython@3.12.2/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.12.2/brython_stdlib.js"></script>
+
+</head>
+
+<body onload="brython()">
+
+<div class="box">
+
+<h2>RBM CYBER SECURITY & ROBOTIC APP</h2>
+
+<p>MODE :
+<span id="mode">🟢 NORMAL</span></p>
+
+<p>BUTTON :
+<span id="button">NONE</span></p>
+
+<p>ENGINE :
+<span id="engine">READY</span></p>
+
+</div>
+
+
+<div class="box">
+
+<h3>CONTROL PANEL</h3>
+
+<div class="btn-panel">
+
+<button id="btn1">BUTTON 1</button>
+
+<button id="btn0">BUTTON 0</button>
+
+<button id="btn10">BUTTON 10</button>
+
+</div>
+
+</div>
+
+
+<div class="box">
+
+<h3>DIGITAL OSCILLOSCOPE</h3>
+
+<pre id="scope">
+[P5] ______________________
+[P3] ______________________
+[P2] ______________________
+[P8] ______________________
+[P6] ______________________
+</pre>
+
+</div>
+
+
+<div class="box">
+
+<h3>RBM LOG</h3>
+
+<pre id="log">
+RBM READY...
+</pre>
+
+</div>
+
+
+
+<script type="text/python">
+
+from browser import document
+
+pins=[5,3,2,8,6]
+
+normal={
+1:"OBSERVE",
+0:"STOP"
+}
+
+critical={
+21:"LOCK"
+}
+
+def log(msg):
+    # सुधार: पुराना लॉग मिटाने के बजाय नया लॉग नीचे जोड़ता है (Professional Logging)
+    document["log"].text += f"\n{msg}"
+
+def waveform(value):
+    bits=format(value,"05b")
+    txt=""
+
+    for i,pin in enumerate(pins):
+        if bits[i]=="1":
+            # सुधार: यहाँ डबल बैकस्लैश (\\n) को हटाकर सिंगल (\n) कर दिया गया है
+            txt+=f"[P{pin}] ⚡ HIGH ──► ██████████████\n"
+        else:
+            txt+=f"[P{pin}] 💤 LOW  ──► ______________\n"
+
+    document["scope"].text=txt
+
+
+
+class RBMEngine:
+
+    def detect(self,code):
+        log("[1] DETECT COMPLETED")
+        return code
+
+    def focus(self,code):
+        log("[2] DETECT -> FOCUS COMPLETED")
+        return code
+
+    def decide(self,code):
+        log("[3] DETECT -> FOCUS -> DECIDE COMPLETED")
+        return code
+
+    def execute(self,code):
+        log("[4] DETECT -> FOCUS -> DECIDE -> EXECUTE COMPLETED")
+        waveform(code)
+
+
+
+engine=RBMEngine()
+
+
+
+def run(code):
+    # बटन दबाते ही सबसे पहले पुराना लॉग साफ़ करें
+    document["log"].text = "🔄 NEW INBOUND BINARY EVENT DETECTED..."
+    code=engine.detect(code)
+    code=engine.focus(code)
+    code=engine.decide(code)
+    engine.execute(code)
+
+
+
+def button1(ev):
+    document["mode"].text="🟢 NORMAL"
+    document["button"].text="BUTTON 1"
+    document["engine"].text=normal[1]
+    run(1)
+
+
+
+def button0(ev):
+    document["mode"].text="🟢 NORMAL"
+    document["button"].text="BUTTON 0"
+    document["engine"].text=normal[0]
+    run(0)
+
+
+
+def button10(ev):
+    document["mode"].text="🔴 CRITICAL"
+    document["button"].text="BUTTON 10"
+    document["engine"].text=critical[21]
+    run(21)
+
+
+
+document["btn1"].bind("click",button1)
+document["btn0"].bind("click",button0)
+document["btn10"].bind("click",button10)
+
+</script>
+
+</body>
+</html>
